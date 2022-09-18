@@ -1,3 +1,21 @@
+const playArea = {
+    width: 505,
+    gridWidth: 101,
+    gridHeight: 82
+}
+
+const enemy = {
+    minSpeed: 100,
+    maxSpeed: 300,
+    localionY: [63, 147, 230]
+}
+
+const playerStarting = {
+    x: 202,
+    y: 400,
+    pause: 500
+}
+
 var Enemy = function (x, y, speed) {
     this.x = x;
     this.y = y;
@@ -8,19 +26,19 @@ var Enemy = function (x, y, speed) {
 Enemy.prototype.update = function (dt) {
     this.x += this.speed * dt;
 
-    if (this.x > 510) {
+    if (this.x > playArea.width) { 
 
-        this.x = -50;
-        this.speed = Math.random() * 200 + 200;
+        this.x = -(playArea.gridWidth);
+        this.speed = (Math.random() * (enemy.maxSpeed + enemy.minSpeed) + enemy.minSpeed);
     }
 
-    if (player.x < this.x + 80 &&
-        player.x + 80 > this.x &&
-        player.y < this.y + 60 &&
-        60 + player.y > this.y) {
+    if (player.x < this.x + playArea.gridWidth &&
+        player.x + playArea.gridWidth > this.x &&
+        player.y < this.y + playArea.gridHeight &&
+        playArea.gridHeight + player.y > this.y) {
 
-        player.x = 200;
-        player.y = 400;
+        player.x = playerStarting.x;
+        player.y = playerStarting.y;
 
     }
 };
@@ -45,36 +63,35 @@ Player.prototype.render = function () {
 };
 
 Player.prototype.handleInput = function (keyPress) {
-    if (keyPress == 'left' && this.x > 0) {
-        this.x -= 103;
+    if (keyPress == 'left' && this.x >= playArea.gridWidth) {
+        this.x -= playArea.gridWidth;
     }
-    if (keyPress == 'right' && this.x < 400) {
-        this.x += 103;
+    if (keyPress == 'right' && this.x < playArea.width - playArea.gridWidth) {
+        this.x += playArea.gridWidth;
     }
-    if (keyPress == 'up' && this.y > 0) {
-        this.y -= 85;
+    if (keyPress == 'up' && this.y > playArea.gridHeight -  playArea.gridHeight) {
+        this.y -= playArea.gridHeight;
     }
-    if (keyPress == 'down' && this.y < 400) {
-        this.y += 85;
+    if (keyPress == 'down' && this.y < playerStarting.y) {
+        this.y += playArea.gridHeight;
     }
-    if (this.y < 0) {
+    if (this.y < (playArea.gridHeight - playArea.gridHeight)) {
         setTimeout(function () {
-            player.x = 200;
-            player.y = 400;
-        }, 300);
+            player.x = playerStarting.x;
+            player.y = playerStarting.y;
+        }, playerStarting.pause);
     }
 }
 
 let allEnemies = [];
-let enemyLocalion = [63, 147, 230]
 
-enemyLocalion.forEach(function (locationY) {
-    enemy = new Enemy(550, locationY, 200);
-    allEnemies.push(enemy);
+enemy.localionY.forEach(function (locationY) {
+    enemyL = new Enemy(playArea.width, locationY,enemy.maxSpeed);
+    allEnemies.push(enemyL);
 });
 
 
-let player = new Player(200, 400);
+let player = new Player(playerStarting.x, playerStarting.y);
 
 
 document.addEventListener('keyup', function (e) {
